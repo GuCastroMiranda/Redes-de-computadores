@@ -1,9 +1,9 @@
 """
 run.py — Ponto de entrada do NetProbe Wi-Fi.
 
-Como usar:  python run.py   (ou dar dois cliques em INICIAR.bat)
+Forma oficial de iniciar: dois cliques em INICIAR.bat (que chama este arquivo).
 
-Sobe o servidor web local e abre o navegador em http://localhost:8000
+Sobe o servidor web local e abre o navegador em http://127.0.0.1:8000
 Se a porta 8000 estiver ocupada, tenta 8001, 8002... automaticamente.
 Para encerrar: Ctrl+C nesta janela.
 """

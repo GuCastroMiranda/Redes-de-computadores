@@ -5,7 +5,7 @@ Trabalho em grupo da disciplina de **Redes de Computadores**: um scanner de rede
 
 > **Status:** 🟡 em desenvolvimento · MVP funcional (os 5 itens implementados e testados num PC Windows)
 > **Apresentação:** segunda-feira, 23/11/2026, ao vivo no notebook Windows do grupo
-> **Última atualização:** 20/11/2026
+> **Última atualização:** 20/11/2026 — forma de iniciar unificada (INICIAR.bat)
 
 ---
 
@@ -49,14 +49,17 @@ Apoio:
 **Requisito:** Windows com **Python 3.8 ou mais novo**. Não precisa instalar nenhuma biblioteca
 (tudo usa só a biblioteca padrão do Python) nem ser administrador.
 
+**1. Baixar o projeto (só na primeira vez):**
 ```bat
 git clone https://github.com/GuCastroMiranda/Redes-de-computadores.git
-cd Redes-de-computadores
-python run.py
 ```
+Para pegar a versão mais nova depois: `git pull` dentro da pasta `Redes-de-computadores`.
 
-Ou dê dois cliques em **`INICIAR.bat`**. O navegador abre sozinho em `http://127.0.0.1:8000`
-(se a porta 8000 estiver ocupada, usa 8001, 8002…).
+**2. Iniciar:** dê **dois cliques em `INICIAR.bat`** (dentro da pasta `Redes-de-computadores`).
+
+Essa é a única forma oficial de iniciar. O `INICIAR.bat` encontra o Python sozinho (`python` ou
+`py`) e executa o `run.py`. O navegador abre sozinho em `http://127.0.0.1:8000` (se a porta 8000
+estiver ocupada, usa 8001, 8002…). Para encerrar, feche a janela preta ou aperte `Ctrl+C` nela.
 
 Na tela: confira a rede sugerida (ex.: `192.168.0.0/24`), ajuste timeout e portas e clique em
 **Iniciar varredura**.
@@ -95,8 +98,8 @@ Encontrou o roteador (53/DNS, 80/HTTP) e o próprio PC (135, 139, 445) com IP e 
 
 ```
 Redes-de-computadores/
-├── run.py              # ponto de entrada (sobe o servidor e abre o navegador)
-├── INICIAR.bat         # atalho de 2 cliques para o run.py
+├── INICIAR.bat         # COMO INICIAR: dois cliques aqui
+├── run.py              # chamado pelo INICIAR.bat (sobe o servidor e abre o navegador)
 ├── server.py           # servidor web + tempo real (SSE)
 ├── historico.py        # banco SQLite com o histórico
 ├── scanner/
