@@ -19,6 +19,7 @@ function escapar(texto) {
 function seloStatus(h) {
   if (h.status !== "online") return '<span class="selo offline">OFFLINE</span>';
   if (h.metodo === "ARP") return '<span class="selo arp">ONLINE · ICMP bloqueado</span>';
+  if (h.metodo === "LOCAL") return '<span class="selo online">ONLINE · esta máquina</span>';
   return '<span class="selo online">ONLINE</span>';
 }
 
@@ -39,7 +40,8 @@ function desenharTabela(destacarIp) {
         || (h.status === "online" ? "—" : "");
       const latencia = h.latencia_ms === null || h.latencia_ms === undefined ? "—"
         : h.latencia_ms < 1 ? "< 1 ms" : `${h.latencia_ms} ms`;
-      const metodo = h.metodo === "ICMP" ? "Ping (ICMP)" : h.metodo === "ARP" ? "ARP Probe" : "—";
+      const metodo = h.metodo === "ICMP" ? "Ping (ICMP)" : h.metodo === "ARP" ? "ARP Probe"
+        : h.metodo === "LOCAL" ? "Esta máquina" : "—";
       return `<tr class="${h.ip === destacarIp ? "novo" : ""}">
         <td class="mono">${escapar(h.ip)}</td>
         <td>${seloStatus(h)}</td>

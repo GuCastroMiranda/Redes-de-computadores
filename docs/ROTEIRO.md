@@ -34,7 +34,8 @@ Total conectado ao hotspot: ~6 aparelhos (o limite do hotspot Samsung costuma se
    **Telas dos celulares LIGADAS e desbloqueadas** durante toda a demonstração (com a tela
    apagada, o Wi-Fi do celular entra em economia de energia e pode não responder — visto no teste
    de 20/11 com um Galaxy A6). Se possível, desativar a economia de bateria nos celulares.
-3. Notebook do colega bloqueando ping:
+3. Notebook do colega bloqueando ping (**nunca** no notebook que roda o NetProbe: a própria
+   máquina aparece só como "ONLINE · esta máquina", não como "ICMP bloqueado"):
    - Linux: `./scripts/bloquear_ping_linux.sh on`
    - Windows: PowerShell **como Administrador**: `.\scripts\bloquear_ping_windows.ps1 on`
 4. No notebook Windows: **dois cliques em `INICIAR.bat`**. O navegador abre sozinho em

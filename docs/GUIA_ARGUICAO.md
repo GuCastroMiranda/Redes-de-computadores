@@ -117,6 +117,9 @@ traz o MAC. IP vazio demora ~3 s (o Windows tenta algumas vezes antes de desisti
   de energia: com a tela apagada o processador do celular dorme e não responde ao ping, mas o
   chip de Wi-Fi continua respondendo ARP sozinho (*ARP offload*), senão o celular "sumiria"
   da rede. É exatamente o caso que o item 2 resolve: o ping falhou, o ARP provou que está ligado.
+- *E se a máquina que roda o NetProbe bloquear ping?* Ela não se acha pelo ping e também não
+  pelo ARP (ninguém responde ARP para si mesmo: a pergunta sai, mas a resposta não volta). Por
+  isso o `orchestrator.py` marca o próprio IP como online à parte ("ONLINE · esta máquina").
 - *Por que no Windows não precisa de administrador?* O `SendARP` é uma função pública do
   Windows; quem monta e envia o pacote é o próprio sistema. (No Linux, montar o pacote à mão
   num socket raw exige `CAP_NET_RAW`, por isso o `sudo`.)

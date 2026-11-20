@@ -68,6 +68,13 @@ def executar(config, emitir, cancelado):
     if cancelado.is_set():
         return _finalizar(hosts, inicio, emitir, cancelado=True)
 
+    # A PRÓPRIA máquina está sempre online. Se ela bloqueia ping, não se acha pelo
+    # ping, e também não se acha pelo ARP (ninguém responde ARP para si mesmo).
+    meu_ip = arp_probe._meu_ip()
+    if meu_ip in hosts and hosts[meu_ip].status != "online":
+        hosts[meu_ip].status, hosts[meu_ip].metodo = "online", "LOCAL"
+        atualizar(hosts[meu_ip])
+
     # ---------------- Etapa 3: Tabela IP <-> MAC ----------------
     online = [ip for ip in ips if hosts[ip].status == "online"]
     emitir("etapa", {"etapa": "mac", "texto": "3/4 Vinculando IP <-> MAC de %d hosts online" % len(online)})
