@@ -31,7 +31,8 @@ sys.path.insert(0, PASTA_PROJETO)
 
 from scanner import icmp_scan                                  # noqa: E402
 from scanner.arp_probe import _meu_ip                          # noqa: E402
-from scanner.plataforma import LINUX, ler_tabela_arp, ler_vizinhos_linux  # noqa: E402
+from scanner.plataforma import (LINUX, ler_tabela_arp, ler_vizinhos_linux,  # noqa: E402
+                                rede_desta_maquina)
 
 EXPLICACAO_ARP = {
     "REACHABLE": "respondeu ARP agora (ligado, mas sem ping: dormindo/bloqueando)",
@@ -72,7 +73,7 @@ def main():
         meu_ip = _meu_ip()
         if not meu_ip:
             sys.exit("Sem rede. Conecte no hotspot ou informe a rede, ex: 10.251.150.0/24")
-        rede = ipaddress.ip_network(meu_ip + "/24", strict=False)
+        rede = ipaddress.ip_network(rede_desta_maquina(meu_ip))  # máscara real (iPhone = /28)
     ips = [str(ip) for ip in rede.hosts()]
 
     os.makedirs(os.path.join(PASTA_PROJETO, "logs"), exist_ok=True)

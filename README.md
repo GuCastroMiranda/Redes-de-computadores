@@ -4,7 +4,7 @@ Trabalho em grupo da disciplina de **Redes de Computadores**: um scanner de rede
 (Wi-Fi) com interface web em tempo real. Funciona em **Linux e Windows**.
 
 > **Status:** 🟣 em validação · desenvolvimento concluído; os 5 itens implementados e testados em Windows e Linux
-> **Apresentação:** segunda-feira, 23/11/2026, ao vivo no notebook **Windows** do Gustavo, no roteador portátil (hotspot 5G) de um celular
+> **Apresentação:** segunda-feira, 23/11/2026, ao vivo no notebook **Windows** do Gustavo, no roteador portátil (hotspot) de um **iPhone** — rede 172.20.10.0/28
 > **Última atualização:** 20/11/2026 — desenvolvimento concluído; etapa de portas limitada a 400 ms (varredura 37 s → 22 s); fase de testes em campo
 
 ---

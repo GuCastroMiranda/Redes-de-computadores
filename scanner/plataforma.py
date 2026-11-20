@@ -137,6 +137,41 @@ def placa_de_rede_linux(ip):
     return None
 
 
+def rede_desta_maquina(ip):
+    """
+    Rede (com a máscara REAL) da placa que tem o IP informado, ex: "172.20.10.0/28".
+    Por que importa: o hotspot do iPhone usa /28 (só 14 endereços), não /24.
+    Se não der para descobrir, ou se a máscara for maior que /24 (rede grande demais
+    para varrer), sugerimos a /24 do IP.
+    """
+    prefixo = None
+    try:
+        if WINDOWS:
+            # "netsh" lista: Endereço IP: x.x.x.x  /  Prefixo de Sub-rede: rede/NN
+            saida = subprocess.run(["netsh", "interface", "ipv4", "show", "addresses"],
+                                   capture_output=True, text=True, errors="replace",
+                                   timeout=5, creationflags=SEM_JANELA).stdout
+            achei_ip = False
+            for linha in saida.splitlines():
+                if ip in _REGEX_IP.findall(linha) and "/" not in linha:
+                    achei_ip = True
+                elif achei_ip and re.search(r"\d+\.\d+\.\d+\.\d+/(\d+)", linha):
+                    prefixo = int(re.search(r"\d+\.\d+\.\d+\.\d+/(\d+)", linha).group(1))
+                    break
+        elif LINUX:
+            saida = subprocess.run(["ip", "-o", "-4", "addr"], capture_output=True,
+                                   text=True, timeout=5, env=AMBIENTE_C).stdout
+            achado = re.search(r"inet %s/(\d+)" % re.escape(ip), saida)
+            if achado:
+                prefixo = int(achado.group(1))
+    except (OSError, subprocess.TimeoutExpired, ValueError):
+        prefixo = None
+    if prefixo is None or prefixo < 24 or prefixo > 30:
+        prefixo = 24
+    import ipaddress
+    return str(ipaddress.ip_network("%s/%d" % (ip, prefixo), strict=False))
+
+
 def ler_vizinhos_linux():
     """
     Tabela de vizinhos do kernel com DETALHES, via "ip -s neigh":

@@ -27,7 +27,7 @@ import historico
 from scanner import orchestrator
 from scanner.arp_probe import metodo_arp
 from scanner.models import ErroValidacao, ScanConfig
-from scanner.plataforma import nome_sistema
+from scanner.plataforma import nome_sistema, rede_desta_maquina
 
 PASTA_WEB = os.path.join(os.path.dirname(os.path.abspath(__file__)), "web")
 TIPOS = {".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8",
@@ -136,7 +136,7 @@ class Manipulador(BaseHTTPRequestHandler):
         try:
             if caminho == "/api/info":
                 ip = ip_local()
-                self._responder_json(200, {"ip": ip, "rede_sugerida": ip.rsplit(".", 1)[0] + ".0/24",
+                self._responder_json(200, {"ip": ip, "rede_sugerida": rede_desta_maquina(ip),
                                            "sistema": nome_sistema(), "arp": metodo_arp(),
                                            "rodando": ESTADO.rodando})
             elif caminho == "/api/eventos":
