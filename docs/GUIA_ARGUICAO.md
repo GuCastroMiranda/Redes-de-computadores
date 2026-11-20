@@ -129,6 +129,11 @@ com a tabela. Para a própria máquina: `ip link`.
 - *O MAC do celular parece "estranho" / muda entre redes. Por quê?* Celulares usam **MAC
   aleatório por rede** (privacidade). Dá para ver: o 2º dígito hexa é 2, 6, A ou E (bit
   "administrado localmente" ligado), ex: `32:0D:...`.
+- *No celular-roteador, o IP e o MAC mostrados em "Sobre o telefone" são diferentes dos da
+  tabela. Está errado?* Não. O celular-roteador está em **duas redes**: a da operadora (5G, ex:
+  `10.139.x.x`, lado da internet) e a do hotspot (ex: `10.251.150.210`, a que varremos). E no
+  hotspot o Samsung usa **MAC aleatório** (ex: `32:0D:...`) em vez do MAC de fábrica da placa
+  (`80:54:2D:...`). Cada interface de rede tem seu próprio IP; o MAC pode ser o físico ou um gerado.
 - *Dá para ver o MAC de um aparelho em outra rede (internet)?* Não. O MAC só existe dentro da
   rede local; ao passar por um roteador, o quadro é refeito com outros MACs.
 
