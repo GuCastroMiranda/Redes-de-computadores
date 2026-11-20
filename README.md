@@ -77,6 +77,12 @@ da tela mostra o IP, o sistema e o método de ARP em uso. Para encerrar: `Ctrl+C
 📋 **Apresentação:** [`docs/ROTEIRO.md`](docs/ROTEIRO.md) (checklist, sequência, plano B) ·
 🎓 **Arguição:** [`docs/GUIA_ARGUICAO.md`](docs/GUIA_ARGUICAO.md) (conceitos e perguntas por item)
 
+### Diagnóstico: aparelho que aparece e some
+`python3 scripts/monitorar.py` (Windows: `python scripts\monitorar.py`) fica varrendo a rede sem
+parar e registra, com horário, quando cada aparelho **APARECE** ou **SOME**, quanto tempo ficou
+fora e, ao sumir, o estado do ARP (`REACHABLE` = ligado mas sem ping; `FAILED` = mudo de vez).
+O log fica em `logs/`. `Ctrl+C` para parar. Não faz parte da apresentação.
+
 ### Validações (o programa nunca começa com parâmetro inválido)
 - Rede em formato CIDR, máscara entre `/24` e `/30` (se digitar só o IP, assume `/24`)
 - Timeout entre 50 e 5000 ms
@@ -155,7 +161,8 @@ Redes-de-computadores/
 │   └── GUIA_ARGUICAO.md   # conceitos e perguntas prováveis por item
 └── scripts/
     ├── bloquear_ping_linux.sh    # demo do item 2 (notebook de colega)
-    └── bloquear_ping_windows.ps1 # idem, para Windows
+    ├── bloquear_ping_windows.ps1 # idem, para Windows
+    └── monitorar.py              # DIAGNÓSTICO: log de quando cada aparelho aparece/some
 ```
 
 ## Uso responsável

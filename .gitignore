@@ -5,3 +5,4 @@ netprobe.db
 *.db
 .vscode/
 .idea/
+logs/
