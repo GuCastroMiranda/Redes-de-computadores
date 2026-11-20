@@ -84,7 +84,7 @@ fora e, ao sumir, o estado do ARP (`REACHABLE` = ligado mas sem ping; `FAILED` =
 O log fica em `logs/`. `Ctrl+C` para parar. Não faz parte da apresentação.
 
 ### Validações (o programa nunca começa com parâmetro inválido)
-- Rede em formato CIDR, máscara entre `/24` e `/30` (se digitar só o IP, assume `/24`)
+- Rede em formato CIDR, máscara entre `/24` e `/30` (se digitar só o IP, assume `/24`). A tela já sugere a rede com a **máscara real** da placa (hotspot do iPhone = `/28`, 14 endereços)
 - Timeout entre 50 e 5000 ms
 - Portas entre 1 e 65535, inicial ≤ final, no máximo 2000 portas por varredura
 - Só uma varredura por vez (clique duplo ou segunda aba recebem aviso)
@@ -133,7 +133,8 @@ portas 53/DNS no celular-roteador e 80/HTTP no notebook.
 - [x] Desempenho: etapa de portas limitada a 400 ms por porta (varredura completa 37 s → 22 s)
 - [x] Windows: `SendARP` não se engana com cache antigo (aparelhos que saíram → sem resposta); só entradas de < ~45 s
 - [x] Roteiro e guia adaptados: apresentação no **notebook Windows** (`INICIAR.bat`), Linux como plano B
-- [ ] Testes em campo no hotspot com o notebook Windows da apresentação (`INICIAR.bat`)
+- [x] Rede sugerida usa a máscara real (iPhone `/28`); varreduras `/28` e `/27` testadas no notebook Windows (20/11)
+- [ ] Testes em campo no hotspot do iPhone com o notebook Windows da apresentação (`INICIAR.bat`)
 - [ ] Demo do item 2 com um aparelho bloqueando ping
 - [ ] Definir os nomes do grupo no roteiro (hoje: Pessoa 1 a 6)
 - [ ] Ensaio geral e *code freeze* (domingo, 22/11)
