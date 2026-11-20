@@ -113,6 +113,10 @@ traz o MAC. IP vazio demora ~3 s (o Windows tenta algumas vezes antes de desisti
   o nosso IP, que é um ARP request normal, e todos os aparelhos respondem.)
 - *Por que só nos IPs que não responderam ao ping?* Quem respondeu ao ping já está provado
   online; economiza tempo e é o que o enunciado pede.
+- *Por que um celular às vezes aparece como "ICMP bloqueado" e às vezes por ping?* Economia
+  de energia: com a tela apagada o processador do celular dorme e não responde ao ping, mas o
+  chip de Wi-Fi continua respondendo ARP sozinho (*ARP offload*), senão o celular "sumiria"
+  da rede. É exatamente o caso que o item 2 resolve: o ping falhou, o ARP provou que está ligado.
 - *Por que no Windows não precisa de administrador?* O `SendARP` é uma função pública do
   Windows; quem monta e envia o pacote é o próprio sistema. (No Linux, montar o pacote à mão
   num socket raw exige `CAP_NET_RAW`, por isso o `sudo`.)

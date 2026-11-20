@@ -108,6 +108,9 @@ e uma máquina que **ignora ping**):
 Lição do teste: com a **tela apagada**, o A6 entrou em economia de energia e não respondeu até ser
 "acordado" (primeiro ping em ~400 ms). Por isso o timeout padrão passou a **1000 ms**, o ARP com
 sudo espera 3 s (3 rodadas) e o roteiro pede **telas ligadas** na apresentação.
+Segundo teste (com `sudo`, modo raw): 4 online em 10,7 s — 3 por ICMP e **1 celular achado só
+pelo ARP** (dormindo: não respondeu ao ping, mas o chip Wi-Fi respondeu ARP); MACs corretos;
+portas 53/DNS no celular-roteador e 80/HTTP no notebook.
 
 ## Roteiro / progresso
 
