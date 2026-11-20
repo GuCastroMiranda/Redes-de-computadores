@@ -60,6 +60,10 @@ responde **Echo Reply (tipo 0)**. ICMP é um protocolo de controle que viaja den
   pode perder aparelho lento (ex: celular economizando bateria). Maior = mais confiável e mais lento.
 - *Por que em paralelo?* Em sequência, 254 × 300 ms ≈ 76 s. Em paralelo, ~2 s. O trabalho é
   quase só esperar a rede, então várias threads ao mesmo tempo resolvem.
+- *Por que o timeout padrão é 1000 ms?* No teste real, um celular com a tela apagada respondeu
+  o primeiro ping em ~400 ms: o Wi-Fi dele estava em **economia de energia** (o rádio "dorme" e
+  só acorda periodicamente). Com 300 ms ele parecia offline. Com 1000 ms não perdemos esses
+  aparelhos e a varredura continua rápida (pings em paralelo).
 - *Por que um aparelho ligado pode não responder ao ping?* Firewall (Windows bloqueia por
   padrão em rede pública), iPhone, configuração do sistema. Por isso existe o item 2.
 - *O que é TTL?* *Time To Live*: contador de saltos do pacote IP; cada roteador diminui 1.
@@ -134,6 +138,9 @@ com a tabela. Para a própria máquina: `ip link`.
   `10.139.x.x`, lado da internet) e a do hotspot (ex: `10.251.150.210`, a que varremos). E no
   hotspot o Samsung usa **MAC aleatório** (ex: `32:0D:...`) em vez do MAC de fábrica da placa
   (`80:54:2D:...`). Cada interface de rede tem seu próprio IP; o MAC pode ser o físico ou um gerado.
+- *Dá para conferir o MAC por outro caminho?* Sim, pelo IPv6 de link-local (`fe80::...`) do
+  aparelho, que é derivado do MAC (EUI-64): no teste, o A6 tinha MAC `0E:21:39:03:CA:F9` e IPv6
+  `fe80::c21:39ff:fe03:caf9` — o mesmo MAC com `ff:fe` no meio e o 7º bit invertido (`0E`→`0C`).
 - *Dá para ver o MAC de um aparelho em outra rede (internet)?* Não. O MAC só existe dentro da
   rede local; ao passar por um roteador, o quadro é refeito com outros MACs.
 

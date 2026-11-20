@@ -37,9 +37,10 @@ from .plataforma import (WINDOWS, eh_root, ler_tabela_arp, ler_vizinhos_linux,
 # Windows: quantas perguntas ARP ao mesmo tempo (cada IP vazio demora ~3-4 s)
 ARPS_EM_PARALELO = 128
 
-# Linux com sudo: rodadas de envio e tempo total esperando respostas (segundos)
-RODADAS_RAW = 2
-ESPERA_RAW = 1.5
+# Linux com sudo: rodadas de envio e tempo total esperando respostas (segundos).
+# 3 rodadas em 3 s dão tempo de um celular em economia de energia "acordar" e responder.
+RODADAS_RAW = 3
+ESPERA_RAW = 3.0
 
 # Linux sem sudo: tempo máximo esperando o kernel resolver os ARPs (segundos)
 ESPERA_MAXIMA_KERNEL = 9.0

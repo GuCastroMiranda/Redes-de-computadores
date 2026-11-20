@@ -5,7 +5,7 @@ Trabalho em grupo da disciplina de **Redes de Computadores**: um scanner de rede
 
 > **Status:** 🟡 em desenvolvimento · os 5 itens implementados e testados em Windows e Linux
 > **Apresentação:** segunda-feira, 23/11/2026, ao vivo num notebook **Linux** do grupo, no roteador portátil (hotspot 5G) de um celular
-> **Última atualização:** 20/11/2026 — ARP montado à mão (modo sudo), casos de borda testados, roteiro e guia de arguição
+> **Última atualização:** 20/11/2026 — teste real com 3 aparelhos; timeout padrão 1000 ms (celulares em economia de energia)
 
 ---
 
@@ -101,8 +101,11 @@ e uma máquina que **ignora ping**):
 | Rede vazia (/30) | ✅ 0 online, sem erro | — |
 | `./iniciar.sh` como usuário comum → pede sudo → modo raw | ✅ | — |
 
-**Notebook Linux real** (hotspot 5G de celular): 2 aparelhos (notebook + celular-roteador) com
-MAC e latência corretos, 4,9 s. Falta o teste com mais celulares conectados.
+**Notebook Linux real** (hotspot 5G de um Galaxy S25 FE, rede `10.251.150.0/24`): 3 aparelhos
+(notebook, celular-roteador e um Galaxy A6) com MAC e latência corretos, ~5,6 s.
+Lição do teste: com a **tela apagada**, o A6 entrou em economia de energia e não respondeu até ser
+"acordado" (primeiro ping em ~400 ms). Por isso o timeout padrão passou a **1000 ms**, o ARP com
+sudo espera 3 s (3 rodadas) e o roteiro pede **telas ligadas** na apresentação.
 
 ## Roteiro / progresso
 
@@ -115,7 +118,8 @@ MAC e latência corretos, 4,9 s. Falta o teste com mais celulares conectados.
 - [x] Testes de casos de borda (cancelar no meio, rede vazia, desconectar e reescanear)
 - [x] Roteiro da apresentação + scripts para bloquear ping na demo do item 2
 - [x] `docs/GUIA_ARGUICAO.md`: conceitos e perguntas prováveis por integrante
-- [ ] Teste no notebook Linux da apresentação, no hotspot 5G, com 3+ celulares conectados
+- [x] Teste no notebook Linux, no hotspot 5G, com 3 aparelhos (sem isolamento entre clientes)
+- [ ] Repetir com `./iniciar.sh` (sudo) e um aparelho bloqueando ping (demo do item 2)
 - [ ] Definir os nomes do grupo no roteiro (hoje: Pessoa 1 a 6)
 - [ ] Ensaio geral e *code freeze* (domingo, 22/11)
 
