@@ -4,7 +4,7 @@ Trabalho em grupo da disciplina de **Redes de Computadores**: um scanner de rede
 (Wi-Fi) com interface web em tempo real. Funciona em **Linux e Windows**.
 
 > **Status:** 🟣 em validação · desenvolvimento concluído; os 5 itens implementados e testados em Windows e Linux
-> **Apresentação:** segunda-feira, 23/11/2026, ao vivo num notebook **Linux** do grupo, no roteador portátil (hotspot 5G) de um celular
+> **Apresentação:** segunda-feira, 23/11/2026, ao vivo no notebook **Windows** do Gustavo, no roteador portátil (hotspot 5G) de um celular
 > **Última atualização:** 20/11/2026 — desenvolvimento concluído; etapa de portas limitada a 400 ms (varredura 37 s → 22 s); fase de testes em campo
 
 ---
@@ -86,6 +86,8 @@ da tela mostra o IP, o sistema e o método de ARP em uso. Para encerrar: `Ctrl+C
 ## Testes realizados
 
 **Windows** (PC, rede doméstica /24, portas 1–1024): ~18 s com timeout 300 ms; ~22 s com o padrão de 1000 ms (portas limitadas a 400 ms de espera).
+Cache ARP: 4 aparelhos que já tinham saído da rede (entrada "Stale" no cache) foram perguntados de
+novo pelo `SendARP` e voltaram **sem resposta** (offline correto); 2 presentes responderam.
 Encontrou 4 hosts com IP, MAC e latência corretos; roteador com 53/DNS e 80/HTTP, PC com
 135/139/445.
 
@@ -113,14 +115,16 @@ sudo espera 3 s (3 rodadas) e o roteiro pede **telas ligadas** na apresentação
 - [x] Validar ping, ARP e leitura de MAC sem admin e sem bibliotecas
 - [x] Itens 1 a 5 implementados + histórico SQLite
 - [x] Validação de entradas e trava contra varreduras simultâneas
-- [x] Suporte a Linux (o notebook da apresentação é Linux) — testado
+- [x] Suporte a Linux (usado nos testes de código) — testado
 - [x] ARP montado à mão com sudo (resolve aparelho que saiu da rede aparecendo como online)
 - [x] Testes de casos de borda (cancelar no meio, rede vazia, desconectar e reescanear)
 - [x] Roteiro da apresentação + scripts para bloquear ping na demo do item 2
 - [x] `docs/GUIA_ARGUICAO.md`: conceitos e perguntas prováveis por integrante
 - [x] Teste no notebook Linux, no hotspot 5G, com 3 aparelhos (sem isolamento entre clientes)
 - [x] Desempenho: etapa de portas limitada a 400 ms por porta (varredura completa 37 s → 22 s)
-- [ ] Testes em campo no hotspot: notebook Windows (`INICIAR.bat`) e notebook Linux (`./iniciar.sh` com sudo)
+- [x] Windows: `SendARP` não se engana com cache antigo (aparelhos que saíram → sem resposta); só entradas de < ~45 s
+- [x] Roteiro e guia adaptados: apresentação no **notebook Windows** (`INICIAR.bat`), Linux como plano B
+- [ ] Testes em campo no hotspot com o notebook Windows da apresentação (`INICIAR.bat`)
 - [ ] Demo do item 2 com um aparelho bloqueando ping
 - [ ] Definir os nomes do grupo no roteiro (hoje: Pessoa 1 a 6)
 - [ ] Ensaio geral e *code freeze* (domingo, 22/11)

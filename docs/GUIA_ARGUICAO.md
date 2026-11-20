@@ -20,13 +20,16 @@ online → 4. portas abertas dos online. Cada novidade vai para a tela na hora.
 Para não depender de instalação na hora da apresentação: tudo usa a biblioteca padrão
 (`subprocess`, `socket`, `ctypes`, `sqlite3`, `http.server`, `concurrent.futures`).
 
-**Por que roda com `sudo`?**
-Para o item 2 montar o pacote ARP e enviá-lo direto na placa de rede (socket *raw*, camada 2).
-O Linux só permite isso com a permissão `CAP_NET_RAW` (root). Sem sudo o programa ainda
-funciona, pedindo para o kernel fazer o ARP, mas é menos preciso (o kernel usa um cache).
+**Em que sistema roda a apresentação?** No **Windows** (notebook do Gustavo), iniciado pelo
+`INICIAR.bat`, sem precisar de administrador. O mesmo código roda no **Linux** (`./iniciar.sh`):
+as diferenças ficam em `scanner/plataforma.py` (comando ping, tabela ARP, MAC da máquina).
 
-**Funciona em Windows também?** Sim. As diferenças ficam em `scanner/plataforma.py`
-(comando ping, tabela ARP, MAC da máquina). No Windows o ARP usa a função `SendARP` do sistema.
+**Como o ARP é enviado em cada sistema?**
+- **Windows (apresentação):** função nativa `SendARP` da biblioteca `iphlpapi.dll`, chamada
+  via `ctypes`. Ela envia o ARP Request e devolve o MAC de quem respondeu.
+- **Linux com `sudo`:** o pacote ARP é montado byte a byte e enviado direto na placa (socket
+  *raw*, camada 2), o que exige a permissão `CAP_NET_RAW` (root).
+- **Linux sem sudo:** o kernel faz o ARP e lemos a tabela de vizinhos (menos preciso: cache).
 
 **Camadas envolvidas (modelo OSI/TCP-IP):**
 
@@ -81,16 +84,21 @@ com **ARP Reply** (seu MAC). Como sem ARP o aparelho nem consegue usar a rede, *
 bloqueiam ARP**. Então: não respondeu ping, mas respondeu ARP → está ligado (bloqueia ICMP).
 Não respondeu nenhum dos dois → IP vazio.
 
-**Como o código faz (modo da apresentação, com sudo).**
+**Como o código faz no Windows (apresentação).** `_sondar_windows` chama
+`consultar_mac_windows` para cada IP sem resposta, 128 ao mesmo tempo. Ela converte o IP para
+32 bits e chama `SendARP` (via `ctypes`): retorno 0 = alguém respondeu, e o buffer de 6 bytes
+traz o MAC. IP vazio demora ~3 s (o Windows tenta algumas vezes antes de desistir).
+
+**Como o código faz no Linux com sudo (pacote montado à mão).**
 - `montar_pacote_arp`: monta o quadro **byte a byte**:
   - Ethernet (14 bytes): MAC destino `FF:FF:FF:FF:FF:FF` (broadcast), MAC origem (nosso),
     tipo `0x0806` (ARP).
   - ARP (28 bytes): hardware 1 (Ethernet), protocolo `0x0800` (IPv4), tamanhos 6 e 4,
     **operação 1 (request)**, nosso MAC/IP, MAC alvo zerado (desconhecido), IP perguntado.
 - `_sondar_linux_raw`: abre um socket `AF_PACKET`/`SOCK_RAW` na placa Wi-Fi, envia um
-  request para cada IP sem resposta, escuta por 1,5 s e lê cada resposta em
+  request para cada IP sem resposta, escuta e lê cada resposta em
   `ler_resposta_arp` (**operação 2 = reply**; pega o MAC e o IP de quem respondeu).
-  Faz 2 rodadas para não perder resposta.
+  Faz 3 rodadas em 3 s para dar tempo de um celular em economia de energia acordar.
 - Sem sudo: `_sondar_linux_kernel` manda um UDP qualquer ao IP, o kernel faz o ARP, e lemos
   `ip -s neigh` aceitando só quem confirmou agora. Windows: `SendARP`.
 
@@ -105,7 +113,13 @@ Não respondeu nenhum dos dois → IP vazio.
   o nosso IP, que é um ARP request normal, e todos os aparelhos respondem.)
 - *Por que só nos IPs que não responderam ao ping?* Quem respondeu ao ping já está provado
   online; economiza tempo e é o que o enunciado pede.
-- *Por que precisa de sudo?* Socket raw na camada 2 exige `CAP_NET_RAW`.
+- *Por que no Windows não precisa de administrador?* O `SendARP` é uma função pública do
+  Windows; quem monta e envia o pacote é o próprio sistema. (No Linux, montar o pacote à mão
+  num socket raw exige `CAP_NET_RAW`, por isso o `sudo`.)
+- *O `SendARP` não devolve só o que está no cache?* Só se a entrada foi confirmada há poucos
+  segundos ("Reachable", até ~45 s). Entradas mais antigas ("Stale") são perguntadas de novo
+  na rede: testamos e aparelhos que já tinham saído voltaram "sem resposta". Por isso, na demo,
+  esperamos ~1 minuto depois de desconectar o celular antes de varrer de novo.
 - *Por que não usar só a tabela ARP do sistema?* Ela é um **cache**: guarda aparelhos que já
   saíram da rede por um tempo. Com o pacote próprio, cada resposta é real e recente.
 
@@ -124,8 +138,8 @@ identificam o fabricante.
 - A própria máquina não está no cache: lê da placa (`/sys/class/net/<placa>/address`).
 - `normalizar_mac` padroniza tudo para `AA:BB:CC:DD:EE:FF`.
 
-**Como conferir ao vivo.** No terminal: `ip neigh` (Linux) ou `arp -a` (Windows) e comparar
-com a tabela. Para a própria máquina: `ip link`.
+**Como conferir ao vivo.** No `cmd`: `arp -a` (Windows) ou `ip neigh` (Linux) e comparar
+com a tabela. Para a própria máquina: `ipconfig /all` ("Endereço Físico") ou `ip link` no Linux.
 
 **Perguntas prováveis.**
 - *Por que precisamos do MAC se já temos o IP?* Na rede local o quadro Ethernet/Wi-Fi é
@@ -218,4 +232,4 @@ Na página, `new EventSource("/api/eventos")` recebe cada evento (`host`, `progr
 - *Por que o próprio notebook aparece com latência "< 1 ms"?* O ping para si mesmo não sai
   pela placa: é respondido internamente.
 - *Por que o aparelho X não apareceu?* Pode estar em economia de energia, fora da faixa /24,
-  ou o hotspot isola os clientes. Mostrar a tabela com `ip neigh` como prova.
+  ou o hotspot isola os clientes. Mostrar a tabela com `arp -a` como prova.
