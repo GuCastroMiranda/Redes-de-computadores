@@ -12,7 +12,8 @@
 |---|---|
 | Notebook **Windows** do Gustavo | Roda o NetProbe (`INICIAR.bat`) — é o que aparece no projetor |
 | 1 celular | **Roteador** (hotspot). Tela ligada, carregando |
-| 3 a 4 celulares | Aparecem como online via ICMP (telas **ligadas**). Um deles será **desconectado** ao vivo |
+| 1 notebook extra + tablet | Alvos **estáveis** (notebook não "dorme" na rede como celular) |
+| 2 a 3 celulares **aprovados no teste de estabilidade** | Aparecem como online via ICMP (telas **ligadas**). Um deles será **desconectado** ao vivo |
 | 1 notebook de colega (Linux ou Windows) | Demo do item 2: **bloqueia ping** → aparece "ONLINE · ICMP bloqueado" |
 | 1 tablet / celulares extras / 2º notebook | **Reserva** (não conectar: menos aparelhos = menos imprevisto). Plano B se algo falhar |
 
@@ -25,6 +26,11 @@ Total conectado ao hotspot: ~6 aparelhos (o limite do hotspot Samsung costuma se
 - [ ] Notebook, celular do hotspot e notebook do colega **carregados**; levar carregadores
 - [ ] Cópia da pasta num pendrive (plano B: rodar no notebook Linux com `./iniciar.sh`)
 - [ ] Notebook do colega: testar o script de bloquear ping (item 2 do checklist abaixo)
+- [ ] **Teste de estabilidade** (no ensaio): todos conectados no hotspot, rodar
+      `python3 scripts/monitorar.py` (Windows: `python scripts\monitorar.py`) por **5 minutos**.
+      Aparelho que tiver qualquer linha **SUMIU** fica de **reserva** (não entra na demo).
+      Visto em 20/11: um Galaxy A12 ficava "conectado" no hotspot, mas mudo na rede (nem ARP
+      respondia) por minutos — não é falha do NetProbe, o próprio `ping` do sistema falhava.
 
 ## 2. Na sala, 10 minutos antes (checklist pré-voo)
 
