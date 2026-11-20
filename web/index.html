@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NetProbe Wi-Fi</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<!-- [ITEM 4] Interface do usuário: status online/offline em tempo real -->
+<header>
+  <h1>NetProbe <span>Wi-Fi</span></h1>
+  <div id="meu-ip">Esta máquina: …</div>
+</header>
+
+<main>
+  <!-- Parâmetros da varredura -->
+  <form id="formulario" autocomplete="off">
+    <label>Rede (CIDR)
+      <input id="rede" placeholder="192.168.0.0/24" required>
+    </label>
+    <label>Timeout (ms)
+      <input id="timeout" type="number" min="50" max="5000" value="300" required>
+    </label>
+    <label>Porta inicial
+      <input id="porta-inicial" type="number" min="1" max="65535" value="1" required>
+    </label>
+    <label>Porta final
+      <input id="porta-final" type="number" min="1" max="65535" value="1024" required>
+    </label>
+    <div class="botoes">
+      <button id="btn-iniciar" type="submit">Iniciar varredura</button>
+      <button id="btn-cancelar" type="button" class="secundario" disabled>Cancelar</button>
+    </div>
+  </form>
+  <div id="mensagem" role="alert"></div>
+
+  <!-- Progresso -->
+  <section id="progresso">
+    <div id="etapa">Pronto para varrer.</div>
+    <div class="barra"><div id="barra-preenchida"></div></div>
+  </section>
+
+  <!-- Resumo -->
+  <section id="resumo">
+    <div class="cartao"><b id="r-online">0</b><span>Online</span></div>
+    <div class="cartao"><b id="r-icmp">0</b><span>via ICMP</span></div>
+    <div class="cartao"><b id="r-arp">0</b><span>via ARP (ping bloqueado)</span></div>
+    <div class="cartao"><b id="r-offline">0</b><span>Offline</span></div>
+  </section>
+
+  <!-- Filtros -->
+  <nav id="filtros">
+    <button data-filtro="online" class="ativo">Online</button>
+    <button data-filtro="arp">Bloqueando ICMP</button>
+    <button data-filtro="offline">Offline</button>
+    <button data-filtro="todos">Todos</button>
+  </nav>
+
+  <!-- Tabela de dispositivos -->
+  <table>
+    <thead>
+      <tr><th>IP</th><th>Status</th><th>MAC</th><th>Descoberto por</th><th>Latência</th><th>Portas abertas</th></tr>
+    </thead>
+    <tbody id="tabela"></tbody>
+  </table>
+  <p id="vazio">Nenhum dispositivo para mostrar neste filtro.</p>
+
+  <!-- Histórico (SQLite) -->
+  <section id="historico">
+    <h2>Histórico de varreduras</h2>
+    <ul id="lista-historico"></ul>
+  </section>
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>
