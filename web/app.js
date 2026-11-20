@@ -37,7 +37,8 @@ function desenharTabela(destacarIp) {
     .map((h) => {
       const portas = (h.portas || []).map((p) => `<span class="porta">${p.porta}/${escapar(p.servico)}</span>`).join("")
         || (h.status === "online" ? "—" : "");
-      const latencia = h.latencia_ms === null || h.latencia_ms === undefined ? "—" : `${h.latencia_ms} ms`;
+      const latencia = h.latencia_ms === null || h.latencia_ms === undefined ? "—"
+        : h.latencia_ms < 1 ? "< 1 ms" : `${h.latencia_ms} ms`;
       const metodo = h.metodo === "ICMP" ? "Ping (ICMP)" : h.metodo === "ARP" ? "ARP Probe" : "—";
       return `<tr class="${h.ip === destacarIp ? "novo" : ""}">
         <td class="mono">${escapar(h.ip)}</td>
@@ -169,7 +170,7 @@ async function abrirDoHistorico(id) {
 async function iniciar() {
   try {
     const info = await (await fetch("/api/info")).json();
-    $("meu-ip").textContent = `Esta máquina: ${info.ip}`;
+    $("meu-ip").textContent = `Esta máquina: ${info.ip} · ${info.sistema}`;
     $("rede").value = info.rede_sugerida;
   } catch (e) { /* segue com o campo vazio */ }
 

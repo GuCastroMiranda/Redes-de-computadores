@@ -26,6 +26,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import historico
 from scanner import orchestrator
 from scanner.models import ErroValidacao, ScanConfig
+from scanner.plataforma import nome_sistema
 
 PASTA_WEB = os.path.join(os.path.dirname(os.path.abspath(__file__)), "web")
 TIPOS = {".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8",
@@ -130,7 +131,7 @@ class Manipulador(BaseHTTPRequestHandler):
             if caminho == "/api/info":
                 ip = ip_local()
                 self._responder_json(200, {"ip": ip, "rede_sugerida": ip.rsplit(".", 1)[0] + ".0/24",
-                                           "rodando": ESTADO.rodando})
+                                           "sistema": nome_sistema(), "rodando": ESTADO.rodando})
             elif caminho == "/api/eventos":
                 self._transmitir_eventos()
             elif caminho == "/api/historico":
