@@ -40,7 +40,10 @@ def main():
     print("  NetProbe Wi-Fi rodando em %s" % endereco)
     print("  Para encerrar: Ctrl+C")
     print("=" * 56)
-    if "--sem-navegador" not in sys.argv:
+    rodando_como_root = hasattr(os, "geteuid") and os.geteuid() == 0
+    if rodando_como_root:
+        print("  Modo sudo: abra o endereco acima no navegador.")
+    elif "--sem-navegador" not in sys.argv:
         webbrowser.open(endereco)
     try:
         servidor.serve_forever()

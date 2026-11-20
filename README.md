@@ -5,7 +5,7 @@ Trabalho em grupo da disciplina de **Redes de Computadores**: um scanner de rede
 
 > **Status:** 🟡 em desenvolvimento · os 5 itens implementados e testados em Windows e Linux
 > **Apresentação:** segunda-feira, 23/11/2026, ao vivo num notebook **Linux** do grupo, no roteador portátil (hotspot 5G) de um celular
-> **Última atualização:** 20/11/2026 — suporte a Linux (ARP, MAC e latência) + `iniciar.sh`
+> **Última atualização:** 20/11/2026 — ARP montado à mão (modo sudo), casos de borda testados, roteiro e guia de arguição
 
 ---
 
@@ -14,7 +14,7 @@ Trabalho em grupo da disciplina de **Redes de Computadores**: um scanner de rede
 | # | Item avaliado (2 pts cada) | Arquivo | Como funciona |
 |---|---|---|---|
 | 1 | **Varredura ICMP (Ping Sweep)** com rede e timeout parametrizáveis | [`scanner/icmp_scan.py`](scanner/icmp_scan.py) | Pinga todos os IPs da faixa `/24` em paralelo (64 ao mesmo tempo) com o timeout escolhido. Só conta como online quem devolve um *Echo Reply* de verdade (`TTL=`). |
-| 2 | **Colisão / ARP Probe** nos IPs que não responderam ao ping | [`scanner/arp_probe.py`](scanner/arp_probe.py) | Para cada IP sem resposta ICMP, dispara uma requisição **ARP** (camada 2). Se alguém responde, o IP está ocupado (o dispositivo só bloqueia ping); se não, está realmente vazio. **Linux:** envia um pacote UDP ao IP, o kernel dispara o ARP e lemos `/proc/net/arp`. **Windows:** função nativa `SendARP`. |
+| 2 | **Colisão / ARP Probe** nos IPs que não responderam ao ping | [`scanner/arp_probe.py`](scanner/arp_probe.py) | Para cada IP sem resposta ICMP, envia uma requisição **ARP** (camada 2). Se alguém responde, o IP está ocupado (o dispositivo só bloqueia ping); se não, está realmente vazio. **Linux com sudo (modo oficial):** o pacote ARP é montado byte a byte e enviado direto na placa (socket raw). **Linux sem sudo:** o kernel faz o ARP e lemos `ip -s neigh`, aceitando só confirmações recentes. **Windows:** função nativa `SendARP`. |
 | 3 | **Vinculação IP ↔ MAC** | [`scanner/mac_table.py`](scanner/mac_table.py) | Monta a tabela IP (lógico, camada 3) ↔ MAC (físico, camada 2) de todos os hosts online, no formato `AA:BB:CC:DD:EE:FF`, a partir do cache ARP do sistema (e da placa de rede, para a própria máquina). |
 | 4 | **Interface em tempo real** (online/offline) | [`web/`](web/) + [`server.py`](server.py) | Painel web em `http://127.0.0.1:8000`. Os dispositivos aparecem na tabela **enquanto** a varredura acontece, via *Server-Sent Events* (SSE). Tem filtros, resumo, barra de progresso e histórico. |
 | 5 | **Portas abertas** com range parametrizável | [`scanner/port_scan.py`](scanner/port_scan.py) | *TCP Connect Scan* (3-way handshake) em cada host online, da porta inicial à final, com o nome do serviço conhecido (80/HTTP, 443/HTTPS…). |
@@ -61,15 +61,21 @@ Para pegar a versão mais nova depois: `git pull` dentro da pasta `Redes-de-comp
 
 | Sistema | Como iniciar |
 |---|---|
-| **Linux** | No terminal, dentro da pasta: `./iniciar.sh` |
+| **Linux** | No terminal, dentro da pasta: `./iniciar.sh` e digitar a senha do sudo |
 | **Windows** | Dois cliques em `INICIAR.bat` |
 
-Os dois só encontram o Python (`python3`/`python`/`py`) e executam o `run.py`. O navegador abre
-sozinho em `http://127.0.0.1:8000` (se a porta 8000 estiver ocupada, usa 8001, 8002…). O
-sistema operacional detectado aparece no topo da tela. Para encerrar: `Ctrl+C` no terminal
+Os dois encontram o Python (`python3`/`python`/`py`) e executam o `run.py`. O navegador abre
+sozinho em `http://127.0.0.1:8000` (se a porta 8000 estiver ocupada, usa 8001, 8002…). O topo
+da tela mostra o IP, o sistema e o método de ARP em uso. Para encerrar: `Ctrl+C` no terminal
 (ou feche a janela).
 
-> Linux: se aparecer "permissão negada", rode uma vez `chmod +x iniciar.sh`.
+> **Linux — por que a senha do sudo?** Para o item 2 montar e enviar o pacote ARP direto na
+> placa de rede (socket raw), o modo mais preciso. Confira no topo: `ARP montado à mão (raw socket)`.
+> Plano B sem sudo: `./iniciar.sh --sem-sudo` (o kernel faz o ARP; pode confundir aparelho que
+> acabou de sair da rede). Se aparecer "permissão negada": `chmod +x iniciar.sh`.
+
+📋 **Apresentação:** [`docs/ROTEIRO.md`](docs/ROTEIRO.md) (checklist, sequência, plano B) ·
+🎓 **Arguição:** [`docs/GUIA_ARGUICAO.md`](docs/GUIA_ARGUICAO.md) (conceitos e perguntas por item)
 
 ### Validações (o programa nunca começa com parâmetro inválido)
 - Rede em formato CIDR, máscara entre `/24` e `/30` (se digitar só o IP, assume `/24`)
@@ -83,15 +89,20 @@ sistema operacional detectado aparece no topo da tela. Para encerrar: `Ctrl+C` n
 Encontrou 4 hosts com IP, MAC e latência corretos; roteador com 53/DNS e 80/HTTP, PC com
 135/139/445.
 
-**Linux** (Debian, Python 3.12, usuário comum sem root, rede virtual /24 com 3 máquinas):
-~4,5 s no total.
+**Linux** (laboratório Docker: Debian, Python 3.12, rede virtual /24 com um servidor web na 8080
+e uma máquina que **ignora ping**):
 
-| Máquina de teste | Esperado | Resultado |
+| Cenário | Com sudo (ARP raw) | Sem sudo (ARP via kernel) |
 |---|---|---|
-| Servidor web na porta 8080 | Online por ICMP, porta 8080 aberta | ✅ |
-| Máquina que **ignora ping** | Offline no ICMP, **online pelo ARP** | ✅ |
-| Gateway da rede | Online por ICMP | ✅ |
-| Todos os online | MAC preenchido | ✅ |
+| Todos ligados: servidor web achado por ICMP + porta 8080; máquina sem ping achada **pelo ARP**; MACs preenchidos | ✅ 3,1 s | ✅ 4,4 s |
+| Desligar 2 máquinas e varrer **na hora** → devem sair offline | ✅ | ❌ aparecem online (cache do kernel) |
+| Religar e varrer → voltam | ✅ | ✅ |
+| Cancelar no meio e iniciar outra na hora | ✅ | — |
+| Rede vazia (/30) | ✅ 0 online, sem erro | — |
+| `./iniciar.sh` como usuário comum → pede sudo → modo raw | ✅ | — |
+
+**Notebook Linux real** (hotspot 5G de celular): 2 aparelhos (notebook + celular-roteador) com
+MAC e latência corretos, 4,9 s. Falta o teste com mais celulares conectados.
 
 ## Roteiro / progresso
 
@@ -100,10 +111,12 @@ Encontrou 4 hosts com IP, MAC e latência corretos; roteador com 53/DNS e 80/HTT
 - [x] Itens 1 a 5 implementados + histórico SQLite
 - [x] Validação de entradas e trava contra varreduras simultâneas
 - [x] Suporte a Linux (o notebook da apresentação é Linux) — testado
+- [x] ARP montado à mão com sudo (resolve aparelho que saiu da rede aparecendo como online)
+- [x] Testes de casos de borda (cancelar no meio, rede vazia, desconectar e reescanear)
+- [x] Roteiro da apresentação + scripts para bloquear ping na demo do item 2
+- [x] `docs/GUIA_ARGUICAO.md`: conceitos e perguntas prováveis por integrante
 - [ ] Teste no notebook Linux da apresentação, no hotspot 5G, com 3+ celulares conectados
-- [ ] Testes de casos de borda (cancelar no meio, rede vazia, desconectar host e reescanear)
-- [ ] Roteiro de demonstração dos itens 2 (host bloqueando ping) e 5 (porta conhecida aberta)
-- [ ] `docs/GUIA_ARGUICAO.md`: conceitos e perguntas prováveis por integrante
+- [ ] Definir os nomes do grupo no roteiro (hoje: Pessoa 1 a 6)
 - [ ] Ensaio geral e *code freeze* (domingo, 22/11)
 
 ## Estrutura
@@ -123,7 +136,13 @@ Redes-de-computadores/
 │   ├── mac_table.py    # item 3
 │   ├── port_scan.py    # item 5
 │   └── orchestrator.py # executa as etapas em ordem
-└── web/                # item 4 (index.html, style.css, app.js)
+├── web/                # item 4 (index.html, style.css, app.js)
+├── docs/
+│   ├── ROTEIRO.md         # checklist, sequência da demonstração, plano B
+│   └── GUIA_ARGUICAO.md   # conceitos e perguntas prováveis por item
+└── scripts/
+    ├── bloquear_ping_linux.sh    # demo do item 2 (notebook de colega)
+    └── bloquear_ping_windows.ps1 # idem, para Windows
 ```
 
 ## Uso responsável

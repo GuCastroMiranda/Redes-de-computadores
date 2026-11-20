@@ -52,7 +52,8 @@ def executar(config, emitir, cancelado):
     # ---------------- Etapa 2: ARP Probe ----------------
     sem_resposta = [ip for ip in ips if ip not in respondidos]
     emitir("etapa", {"etapa": "arp",
-                     "texto": "2/4 ARP Probe nos %d IPs que não responderam ao ping" % len(sem_resposta)})
+                     "texto": "2/4 ARP Probe [%s] nos %d IPs que não responderam ao ping"
+                              % (arp_probe.metodo_arp(), len(sem_resposta))})
     feitos[0] = 0
 
     def ao_concluir_arp(ip, mac):

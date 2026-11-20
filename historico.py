@@ -17,8 +17,19 @@ ARQUIVO_BANCO = os.path.join(os.path.dirname(os.path.abspath(__file__)), "netpro
 _trava = threading.Lock()  # evita duas gravações ao mesmo tempo
 
 
+def _devolver_dono():
+    """Se rodando com sudo, o banco fica com o usuário normal (senão ele não grava depois)."""
+    uid, gid = os.environ.get("SUDO_UID"), os.environ.get("SUDO_GID")
+    if uid and gid and hasattr(os, "chown") and os.path.exists(ARQUIVO_BANCO):
+        try:
+            os.chown(ARQUIVO_BANCO, int(uid), int(gid))
+        except (OSError, ValueError):
+            pass
+
+
 def _conectar():
     conexao = sqlite3.connect(ARQUIVO_BANCO, timeout=5)
+    _devolver_dono()
     conexao.execute("""
         CREATE TABLE IF NOT EXISTS varreduras (
             id          INTEGER PRIMARY KEY AUTOINCREMENT,

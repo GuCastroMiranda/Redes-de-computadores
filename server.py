@@ -25,6 +25,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 import historico
 from scanner import orchestrator
+from scanner.arp_probe import metodo_arp
 from scanner.models import ErroValidacao, ScanConfig
 from scanner.plataforma import nome_sistema
 
@@ -47,6 +48,9 @@ class EstadoVarredura:
     def emitir(self, tipo, dados):
         """Guarda o evento e acorda todas as conexões SSE esperando novidade."""
         with self.condicao:
+            if tipo == "fim":
+                # libera um novo "Iniciar" no mesmo instante em que a tela recebe o fim
+                self.rodando = False
             self.eventos.append({"tipo": tipo, "dados": dados})
             self.condicao.notify_all()
 
@@ -64,6 +68,7 @@ class EstadoVarredura:
         return True
 
     def _rodar(self, config):
+        meu_numero = self.numero
         self.emitir("inicio", {"rede": str(config.rede), "timeout_ms": config.timeout_ms,
                                "porta_inicial": config.porta_inicial,
                                "porta_final": config.porta_final})
@@ -77,7 +82,8 @@ class EstadoVarredura:
             self.emitir("erro", {"mensagem": "Falha inesperada: %s" % erro})
         finally:
             with self.condicao:
-                self.rodando = False
+                if self.numero == meu_numero:  # não mexe numa varredura mais nova
+                    self.rodando = False
                 self.condicao.notify_all()
 
 
@@ -131,7 +137,8 @@ class Manipulador(BaseHTTPRequestHandler):
             if caminho == "/api/info":
                 ip = ip_local()
                 self._responder_json(200, {"ip": ip, "rede_sugerida": ip.rsplit(".", 1)[0] + ".0/24",
-                                           "sistema": nome_sistema(), "rodando": ESTADO.rodando})
+                                           "sistema": nome_sistema(), "arp": metodo_arp(),
+                                           "rodando": ESTADO.rodando})
             elif caminho == "/api/eventos":
                 self._transmitir_eventos()
             elif caminho == "/api/historico":

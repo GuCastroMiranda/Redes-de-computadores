@@ -104,19 +104,62 @@ def mac_desta_maquina(ip):
     (A própria máquina não aparece na tabela ARP, então buscamos de outro jeito.)
     """
     if LINUX:
-        try:
-            # "ip -o -4 addr" lista: <n>: <placa> inet <ip>/<máscara> ...
-            saida = subprocess.run(["ip", "-o", "-4", "addr"], capture_output=True,
-                                   text=True, timeout=5, env=AMBIENTE_C).stdout
-            for linha in saida.splitlines():
-                colunas = linha.split()
-                if "inet" in colunas and colunas[colunas.index("inet") + 1].split("/")[0] == ip:
-                    with open("/sys/class/net/%s/address" % colunas[1]) as arquivo:
-                        return normalizar_mac(arquivo.read())
-        except (OSError, subprocess.TimeoutExpired, IndexError):
-            pass
+        placa = placa_de_rede_linux(ip)
+        if placa:
+            try:
+                with open("/sys/class/net/%s/address" % placa) as arquivo:
+                    return normalizar_mac(arquivo.read())
+            except OSError:
+                pass
     # Último recurso (qualquer sistema): MAC de uma placa desta máquina
     numero = uuid.getnode()
     if (numero >> 40) & 1:  # bit "multicast" ligado = número inventado, não é MAC real
         return None
     return normalizar_mac(":".join("%02X" % ((numero >> s) & 0xFF) for s in range(40, -1, -8)))
+
+
+def eh_root():
+    """True se o programa está rodando como root (Linux, via sudo)."""
+    return hasattr(os, "geteuid") and os.geteuid() == 0
+
+
+def placa_de_rede_linux(ip):
+    """Nome da placa de rede (ex: wlan0, wlp2s0) que tem o IP informado, ou None."""
+    try:
+        saida = subprocess.run(["ip", "-o", "-4", "addr"], capture_output=True,
+                               text=True, timeout=5, env=AMBIENTE_C).stdout
+    except (OSError, subprocess.TimeoutExpired):
+        return None
+    for linha in saida.splitlines():
+        colunas = linha.split()
+        if "inet" in colunas and colunas[colunas.index("inet") + 1].split("/")[0] == ip:
+            return colunas[1]
+    return None
+
+
+def ler_vizinhos_linux():
+    """
+    Tabela de vizinhos do kernel com DETALHES, via "ip -s neigh":
+        {ip: {"mac": ..., "estado": "REACHABLE"/"STALE"/"FAILED"/..., "confirmado_ha": segundos}}
+    "confirmado_ha" = há quantos segundos o vizinho respondeu pela última vez.
+    Devolve None se o comando "ip" não existir.
+    """
+    try:
+        saida = subprocess.run(["ip", "-s", "-4", "neigh", "show"], capture_output=True,
+                               text=True, timeout=5, env=AMBIENTE_C).stdout
+    except (OSError, subprocess.TimeoutExpired):
+        return None
+    vizinhos = {}
+    for linha in saida.splitlines():
+        colunas = linha.split()
+        if not colunas:
+            continue
+        info = {"mac": None, "estado": colunas[-1].upper(), "confirmado_ha": None}
+        if "lladdr" in colunas:
+            info["mac"] = normalizar_mac(colunas[colunas.index("lladdr") + 1])
+        if "used" in colunas:
+            tempos = colunas[colunas.index("used") + 1].split("/")  # usado/confirmado/atualizado
+            if len(tempos) >= 2 and tempos[1].isdigit():
+                info["confirmado_ha"] = int(tempos[1])
+        vizinhos[colunas[0]] = info
+    return vizinhos

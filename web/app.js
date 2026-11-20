@@ -170,7 +170,7 @@ async function abrirDoHistorico(id) {
 async function iniciar() {
   try {
     const info = await (await fetch("/api/info")).json();
-    $("meu-ip").textContent = `Esta máquina: ${info.ip} · ${info.sistema}`;
+    $("meu-ip").textContent = `Esta máquina: ${info.ip} · ${info.sistema} · ${info.arp}`;
     $("rede").value = info.rede_sugerida;
   } catch (e) { /* segue com o campo vazio */ }
 
