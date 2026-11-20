@@ -3,9 +3,9 @@
 Trabalho em grupo da disciplina de **Redes de Computadores**: um scanner de rede local
 (Wi-Fi) com interface web em tempo real. Funciona em **Linux e Windows**.
 
-> **Status:** 🟡 em desenvolvimento · os 5 itens implementados e testados em Windows e Linux
+> **Status:** 🟣 em validação · desenvolvimento concluído; os 5 itens implementados e testados em Windows e Linux
 > **Apresentação:** segunda-feira, 23/11/2026, ao vivo num notebook **Linux** do grupo, no roteador portátil (hotspot 5G) de um celular
-> **Última atualização:** 20/11/2026 — teste real com 3 aparelhos; timeout padrão 1000 ms (celulares em economia de energia)
+> **Última atualização:** 20/11/2026 — desenvolvimento concluído; etapa de portas limitada a 400 ms (varredura 37 s → 22 s); fase de testes em campo
 
 ---
 
@@ -48,8 +48,8 @@ Apoio:
 ## Como rodar
 
 **Requisito:** **Python 3.8 ou mais novo** e o comando `ping` (já vem no Linux e no Windows).
-Não precisa instalar nenhuma biblioteca (só a biblioteca padrão do Python) nem ser
-administrador/root.
+Não precisa instalar nenhuma biblioteca (só a biblioteca padrão do Python). No Windows não
+precisa ser administrador; no Linux o `iniciar.sh` pede a senha do sudo (veja abaixo).
 
 **1. Baixar o projeto (só na primeira vez):**
 ```bash
@@ -119,7 +119,9 @@ sudo espera 3 s (3 rodadas) e o roteiro pede **telas ligadas** na apresentação
 - [x] Roteiro da apresentação + scripts para bloquear ping na demo do item 2
 - [x] `docs/GUIA_ARGUICAO.md`: conceitos e perguntas prováveis por integrante
 - [x] Teste no notebook Linux, no hotspot 5G, com 3 aparelhos (sem isolamento entre clientes)
-- [ ] Repetir com `./iniciar.sh` (sudo) e um aparelho bloqueando ping (demo do item 2)
+- [x] Desempenho: etapa de portas limitada a 400 ms por porta (varredura completa 37 s → 22 s)
+- [ ] Testes em campo no hotspot: notebook Windows (`INICIAR.bat`) e notebook Linux (`./iniciar.sh` com sudo)
+- [ ] Demo do item 2 com um aparelho bloqueando ping
 - [ ] Definir os nomes do grupo no roteiro (hoje: Pessoa 1 a 6)
 - [ ] Ensaio geral e *code freeze* (domingo, 22/11)
 
