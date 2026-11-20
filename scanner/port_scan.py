@@ -21,6 +21,12 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 CONEXOES_EM_PARALELO = 200
 
+# Tempo máximo de espera por porta. Na rede local uma porta aberta responde em poucos ms;
+# esperar mais só deixa lentas as portas "filtradas" (que nunca respondem).
+# O enunciado pede timeout parametrizável no ping (item 1) e range nas portas (item 5),
+# então usamos o timeout da tela, mas limitado a este teto.
+TETO_TIMEOUT_PORTA_MS = 400
+
 # Serviços conhecidos (portas "bem conhecidas"), só para exibir um nome amigável
 SERVICOS_CONHECIDOS = {
     20: "FTP-dados", 21: "FTP", 22: "SSH", 23: "Telnet", 25: "SMTP", 53: "DNS",
@@ -52,6 +58,7 @@ def varrer_portas(ip, porta_inicial, porta_final, timeout_ms, cancelado=None):
     Retorna lista ordenada: [{"porta": 80, "servico": "HTTP"}, ...]
     """
     abertas = []
+    timeout_ms = min(timeout_ms, TETO_TIMEOUT_PORTA_MS)
     portas = range(porta_inicial, porta_final + 1)
     with ThreadPoolExecutor(max_workers=CONEXOES_EM_PARALELO) as executor:
         tarefas = {executor.submit(porta_aberta, ip, p, timeout_ms): p for p in portas}

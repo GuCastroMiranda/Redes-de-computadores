@@ -85,7 +85,7 @@ da tela mostra o IP, o sistema e o método de ARP em uso. Para encerrar: `Ctrl+C
 
 ## Testes realizados
 
-**Windows** (PC, rede doméstica /24, timeout 300 ms, portas 1–1024): ~18 s no total.
+**Windows** (PC, rede doméstica /24, portas 1–1024): ~18 s com timeout 300 ms; ~22 s com o padrão de 1000 ms (portas limitadas a 400 ms de espera).
 Encontrou 4 hosts com IP, MAC e latência corretos; roteador com 53/DNS e 80/HTTP, PC com
 135/139/445.
 

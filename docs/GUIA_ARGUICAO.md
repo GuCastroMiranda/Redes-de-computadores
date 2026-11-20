@@ -58,7 +58,7 @@ responde **Echo Reply (tipo 0)**. ICMP é um protocolo de controle que viaja den
   broadcast `.255`). `rede.hosts()` já devolve só os 254.
 - *Para que serve o timeout?* É quanto esperamos por cada resposta. Menor = mais rápido, mas
   pode perder aparelho lento (ex: celular economizando bateria). Maior = mais confiável e mais lento.
-- *Por que em paralelo?* Em sequência, 254 × 300 ms ≈ 76 s. Em paralelo, ~2 s. O trabalho é
+- *Por que em paralelo?* Em sequência, 254 × 1000 ms ≈ 4 min. Em paralelo (64 por vez), ~4 s. O trabalho é
   quase só esperar a rede, então várias threads ao mesmo tempo resolvem.
 - *Por que o timeout padrão é 1000 ms?* No teste real, um celular com a tela apagada respondeu
   o primeiro ping em ~400 ms: o Wi-Fi dele estava em **economia de energia** (o rádio "dorme" e
@@ -166,6 +166,9 @@ com o **3-way handshake**: `SYN` → `SYN/ACK` → `ACK`.
   nada, então não dá para distinguir aberta de filtrada de forma confiável.
 - *Diferença para o SYN scan do nmap?* O nmap `-sS` manda só o `SYN` e não completa o
   handshake (meia-abertura, exige root). O nosso completa a conexão (mais simples, não exige root).
+- *Qual o timeout das portas?* O da tela, mas no máximo **400 ms** (`TETO_TIMEOUT_PORTA_MS`).
+  Na rede local uma porta aberta responde em milissegundos; esperar 1 s em cada porta
+  filtrada deixaria a varredura de 1024 portas lenta (medimos: 37 s sem o teto, 22 s com o teto).
 - *Faixas de portas?* 0–1023 bem conhecidas (HTTP, SSH...), 1024–49151 registradas,
   49152–65535 dinâmicas.
 - *Por que limitar a 2000 portas por varredura?* Tempo de apresentação: 2000 portas × vários
