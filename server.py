@@ -31,7 +31,7 @@ from scanner.plataforma import nome_sistema, rede_desta_maquina
 
 PASTA_WEB = os.path.join(os.path.dirname(os.path.abspath(__file__)), "web")
 TIPOS = {".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8",
-         ".js": "application/javascript; charset=utf-8"}
+         ".js": "application/javascript; charset=utf-8", ".png": "image/png"}
 
 
 # ---------------------------------------------------------------------------

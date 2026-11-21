@@ -4,13 +4,25 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>NetProbe Wi-Fi</title>
+  <link rel="icon" href="logo-iesb.png">
   <link rel="stylesheet" href="style.css">
+  <!-- tema.js vem antes do corpo da página para já abrir no tema certo (sem "piscar") -->
+  <script src="tema.js"></script>
 </head>
 <body>
 <!-- [ITEM 4] Interface do usuário: status online/offline em tempo real -->
 <header>
-  <h1>NetProbe <span>Wi-Fi</span></h1>
-  <div id="meu-ip">Esta máquina: …</div>
+  <div class="marca">
+    <img src="logo-iesb.png" alt="IESB Centro Universitário" class="logo">
+    <div>
+      <h1>NetProbe <span>Wi-Fi</span></h1>
+      <div class="subtitulo">IESB · Redes de Computadores</div>
+    </div>
+  </div>
+  <div class="direita">
+    <div id="meu-ip">Esta máquina: …</div>
+    <button id="btn-tema" type="button" class="tema" title="Alternar tema claro/escuro">🌙 Escuro</button>
+  </div>
 </header>
 
 <main>
