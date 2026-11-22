@@ -74,7 +74,7 @@ da tela mostra o IP, o sistema e o método de ARP em uso. Para encerrar: `Ctrl+C
 > Plano B sem sudo: `./iniciar.sh --sem-sudo` (o kernel faz o ARP; pode confundir aparelho que
 > acabou de sair da rede). Se aparecer "permissão negada": `chmod +x iniciar.sh`.
 
-📋 **Apresentação:** [`docs/ROTEIRO.md`](docs/ROTEIRO.md) (checklist, sequência, plano B) ·
+📋 **Apresentação:** [`docs/ROTEIRO.md`](docs/ROTEIRO.md) (checklist, sequência, plano B) · [**PDF do roteiro com as falas**](docs/Roteiro_NetProbe.pdf) ·
 🎓 **Arguição:** [`docs/GUIA_ARGUICAO.md`](docs/GUIA_ARGUICAO.md) (conceitos e perguntas por item)
 
 ### Diagnóstico: aparelho que aparece e some
