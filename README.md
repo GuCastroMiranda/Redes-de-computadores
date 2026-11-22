@@ -136,6 +136,7 @@ portas 53/DNS no celular-roteador e 80/HTTP no notebook.
 - [x] Rede sugerida usa a máscara real (iPhone `/28`); varreduras `/28` e `/27` testadas no notebook Windows (20/11)
 - [ ] Testes em campo no hotspot do iPhone com o notebook Windows da apresentação (`INICIAR.bat`)
 - [ ] Demo do item 2 com um aparelho bloqueando ping
+- [x] Roteiro dividido por integrante (docs/ROTEIRO.md, seção 3: fala + tela + arquivo de cada um)
 - [ ] Definir os nomes do grupo no roteiro (hoje: Pessoa 1 a 6)
 - [ ] Ensaio geral e *code freeze* (domingo, 22/11)
 
