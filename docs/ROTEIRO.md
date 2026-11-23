@@ -24,6 +24,7 @@ Total conectado ao hotspot: ~6 aparelhos (o limite do hotspot Samsung costuma se
 - [ ] Notebook Windows com a versão final: na pasta, `git pull` → depois **não mexer mais**
 - [ ] Ensaio completo feito no **mesmo hotspot** que será usado na segunda (veja o item 4)
 - [ ] Notebook, celular do hotspot e notebook do colega **carregados**; levar carregadores
+- [ ] **Wireshark** instalado no notebook da apresentação (Windows: instalador oficial, aceitar o **Npcap**; Linux: `sudo apt install wireshark`) e testado no ensaio na interface Wi-Fi
 - [ ] Cópia da pasta num pendrive (plano B: rodar no notebook Linux com `./iniciar.sh`)
 - [ ] Notebook do colega: testar o script de bloquear ping (item 2 do checklist abaixo)
 - [ ] **Teste de estabilidade** (no ensaio): todos conectados no hotspot, rodar
@@ -47,7 +48,8 @@ Total conectado ao hotspot: ~6 aparelhos (o limite do hotspot Samsung costuma se
 4. No notebook Windows: **dois cliques em `INICIAR.bat`**. O navegador abre sozinho em
    `http://127.0.0.1:8000` (não feche a janela preta).
 5. Conferir no topo da tela: **`Windows · SendARP (Windows)`** e o IP do hotspot.
-6. Fazer **uma varredura de aquecimento** e conferir que todos aparecem.
+6. Abrir o **Wireshark**, escolher a interface **Wi-Fi** (a do hotspot) e iniciar a captura; deixar a janela ao lado do navegador.
+7. Fazer **uma varredura de aquecimento** e conferir que todos aparecem.
    Ela fica salva no histórico (é o nosso plano B, veja o item 5).
 
 ## 3. Sequência da demonstração (~12 min) — dividida por integrante
@@ -66,6 +68,12 @@ Total conectado ao hotspot: ~6 aparelhos (o limite do hotspot Samsung costuma se
 | 5 | Pessoa 5 — ______ | 7:00–9:00 | **Item 5 · Portas abertas** | `scanner/port_scan.py` |
 | 6 | Pessoa 6 — ______ | 9:00–11:00 | **Item 4 · Interface em tempo real** + histórico | `web/`, `server.py` (SSE), `scanner/models.py` |
 | — | Todos | 11:00– | Perguntas do professor | `docs/GUIA_ARGUICAO.md` |
+
+> **Captura de pacotes ao vivo (Wireshark):** a regra geral do trabalho no Blackboard pede "IP e portas,
+> com captura de pacotes ao vivo". O Wireshark fica aberto durante a apresentação: Pessoa 2 mostra o
+> filtro `icmp` (Echo request/reply), Pessoa 3 o filtro `arp` (Who has… / is at…), Pessoa 5 o filtro
+> `tcp.flags.syn == 1` (SYN → SYN, ACK). Não altera o código. Falas completas e telas de exemplo no
+> [`Roteiro_NetProbe.pdf`](Roteiro_NetProbe.pdf).
 
 ### Pessoa 1 — Abertura e arquitetura (1 min 30)
 - **Tela:** NetProbe já aberto (varredura de aquecimento feita). Apontar o topo: IP do notebook,
@@ -152,6 +160,7 @@ Total conectado ao hotspot: ~6 aparelhos (o limite do hotspot Samsung costuma se
 
 | Situação | O que fazer |
 |---|---|
+| Wireshark não mostra pacotes | Conferir se a interface escolhida é a **Wi-Fi** e se a captura está rodando |
 | Um celular não aparece | Ligar a tela dele, no `cmd`: `ping -n 3 <ip>` para "acordá-lo" e varrer de novo |
 | Celular desconectado ainda aparece online | Esperar ~1 minuto e varrer de novo (veja a nota do item 3) |
 | Notebook do colega não aparece como "ICMP bloqueado" (aparece via ICMP) | O script não foi ativado: rodar de novo o `on` (Windows: como Administrador) |
