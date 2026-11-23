@@ -1,6 +1,6 @@
 # Roteiro da apresentação — NetProbe Wi-Fi
 
-> Segunda-feira, 23/11/2026 · notebook **Windows** do Gustavo · rede = roteador portátil (hotspot) de um celular
+> Segunda-feira, 23/11/2026 · **notebook Linux do Gui** (`./iniciar.sh`, sudo; plano B: notebook Windows do Gustavo) · rede = roteador portátil (hotspot) de um celular
 > **Regra de ouro:** qualquer travamento ou ajuste de código durante a apresentação = **nota 0**.
 > Por isso: **ninguém edita código depois do ensaio de domingo**, e seguimos este roteiro à risca.
 
@@ -70,9 +70,10 @@ Total conectado ao hotspot: ~6 aparelhos (o limite do hotspot Samsung costuma se
 | — | Todos | 11:00– | Perguntas do professor | `docs/GUIA_ARGUICAO.md` |
 
 > **Captura de pacotes ao vivo (Wireshark):** a regra geral do trabalho no Blackboard pede "IP e portas,
-> com captura de pacotes ao vivo". O Wireshark fica aberto durante a apresentação: Pessoa 2 mostra o
-> filtro `icmp` (Echo request/reply), Pessoa 3 o filtro `arp` (Who has… / is at…), Pessoa 5 o filtro
-> `tcp.flags.syn == 1` (SYN → SYN, ACK). Não altera o código. Falas completas e telas de exemplo no
+> com captura de pacotes ao vivo". O Wireshark fica aberto durante a apresentação: Captura na interface **Wi-Fi
+> (`wlp0s20f3`), nunca em Loopback**, sem filtro de captura. Filtros de exibição: Pessoa 2
+> `icmp.type == 8 || icmp.type == 0`, Pessoa 3 `arp` e `arp.opcode == 2`, Pessoa 5
+> `tcp.flags.syn == 1 && ip.src == REDE && ip.dst == REDE` (REDE = a do NetProbe, ex. `10.23.126.0/24`). Não altera o código. Falas completas e telas de exemplo no
 > [`Roteiro_NetProbe.pdf`](Roteiro_NetProbe.pdf).
 
 ### Pessoa 1 — Abertura e arquitetura (1 min 30)
